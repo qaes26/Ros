@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>تلفزيون الصداقة - لرنيم</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+body{font-family:'Cairo',Tahoma,sans-serif;background:#050505;color:#fff;overflow:hidden;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+.wall-bg{position:absolute;inset:0;z-index:-2;background:radial-gradient(circle at 50% 30%,#1a1a1a 0%,#000 90%)}
+.ambilight-glow{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:80%;height:60%;background:#000;filter:blur(90px);opacity:0;transition:background-color .8s ease,opacity .5s ease;z-index:-1}
+.tv-container{margin-top:5vh;position:relative;width:95%;max-width:1000px;aspect-ratio:16/9;z-index:10}
+.tv-frame{width:100%;height:100%;background:#111;border-radius:8px;box-shadow:inset 0 0 2px rgba(255,255,255,.1),0 0 0 6px #080808,0 0 0 8px #1a1a1a,0 20px 60px rgba(0,0,0,.9);position:relative;overflow:hidden}
+.screen{position:absolute;inset:0;background:#000;overflow:hidden}
+.glass-reflection{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.05) 0%,transparent 40%,rgba(255,255,255,.02) 100%);pointer-events:none;z-index:50}
+.scanlines{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0) 50%,rgba(0,0,0,.2) 50%);background-size:100% 4px;pointer-events:none;z-index:40;opacity:.2}
+.table-surface{position:absolute;bottom:0;left:0;right:0;height:38vh;background:linear-gradient(to bottom,#1a0f0a 0%,#0d0705 100%);z-index:5;box-shadow:0 -5px 20px rgba(0,0,0,.8);display:flex;justify-content:center;align-items:flex-end;padding-bottom:2vh}
+.tv-reflection{position:absolute;top:0;width:90%;max-width:950px;height:15vh;background:inherit;filter:blur(25px);opacity:.2;transform:scaleY(-1);-webkit-mask-image:linear-gradient(to bottom,#000 0%,transparent 100%);mask-image:linear-gradient(to bottom,#000 0%,transparent 100%);z-index:6;transition:background-color .5s}
+.remote-container{position:relative;z-index:20;transform:translateY(-5px) rotateX(10deg);perspective:1000px}
+.remote-panel{background:linear-gradient(145deg,#1f1f1f,#0f0f0f);border:1px solid #333;border-radius:30px;padding:20px;display:flex;flex-direction:column;gap:15px;box-shadow:0 15px 35px rgba(0,0,0,.8),inset 0 1px 1px rgba(255,255,255,.1);width:320px;max-width:95vw}
+.btn{border-radius:50%;border:none;cursor:pointer;display:flex;justify-content:center;align-items:center;transition:all .1s;color:#fff;box-shadow:0 4px 8px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1)}
+.btn:active{transform:scale(.95)}
+.btn-power{width:60px;height:60px;background:radial-gradient(circle at 30% 30%,#ff4d4d,#b91c1c);border:2px solid #7f1d1d}
+.btn-arrow{width:55px;height:55px;background:linear-gradient(145deg,#374151,#1f2937)}
+.btn-heart{background:radial-gradient(circle at 30% 30%,#fbbf24,#d97706)!important;width:60px;height:60px;background:radial-gradient(circle at 30% 30%,#ec4899,#be185d)}
+@keyframes powerPulse{0%{box-shadow:0 0 0 0 rgba(220,38,38,.7);transform:scale(1)}50%{box-shadow:0 0 0 15px rgba(220,38,38,0);transform:scale(1.05)}100%{box-shadow:0 0 0 0 rgba(220,38,38,0);transform:scale(1)}}
+.needs-attention{animation:powerPulse 2s infinite}
+.power-hint{position:absolute;top:-45px;left:50%;transform:translateX(-50%);background:#fff;color:#000;padding:6px 12px;border-radius:20px;font-weight:700;font-size:12px;pointer-events:none;white-space:nowrap;animation:floatHint 1s ease-in-out infinite alternate}
+@keyframes floatHint{from{transform:translate(-50%,0)}to{transform:translate(-50%,-5px)}}
+@keyframes turnOn{0%{transform:scaleY(.005) scaleX(0);background:#fff}60%{transform:scaleY(.005) scaleX(1);background:#fff}100%{transform:scaleY(1) scaleX(1);background:transparent}}
+.anim-on{animation:turnOn .5s cubic-bezier(.23,1,.32,1) forwards}
+.led-light{width:8px;height:8px;border-radius:50%;position:absolute;bottom:15px;right:30px;z-index:60;transition:all .3s}
+.led-off{background:#500}
+.led-on{background:#0f0;box-shadow:0 0 8px #0f0}
+.tv-text-h1{text-shadow:0 4px 10px rgba(0,0,0,.8)}
+
+.tv-frame{container-type:size}
+.h{font-size:6.2cqw;font-weight:900;line-height:1.25;margin-bottom:2cqw;text-shadow:0 .5cqw 1.5cqw rgba(0,0,0,.8)}
+.p{font-size:3.3cqw;font-weight:700;line-height:1.7;max-width:88%}
+.tag{font-size:2.6cqw;font-weight:900;padding:.6cqw 2.4cqw;border-radius:99px;margin-bottom:2cqw}
+.box{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.18);border-radius:2cqw;padding:2cqw 3cqw;backdrop-filter:blur(3px)}
+.ico{width:9cqw;height:9cqw;margin-bottom:1.5cqw}
+.name{background:linear-gradient(90deg,#fde68a,#f9a8d4,#fde68a);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 3s linear infinite;font-weight:900}
+@keyframes shine{to{background-position:200% center}}
+.parts{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:5}
+.parts span{position:absolute;bottom:-10%;animation:rise linear infinite;opacity:.0}
+@keyframes rise{0%{transform:translateY(0) rotate(0);opacity:0}15%{opacity:.8}100%{transform:translateY(-120cqh) rotate(40deg);opacity:0}}
+.noise{position:absolute;inset:0;z-index:30;opacity:0;pointer-events:none;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");mix-blend-mode:screen}
+.noise.on{animation:flick .4s steps(4) 1}
+@keyframes flick{0%,100%{opacity:.9;background-position:0 0}50%{opacity:.6;background-position:40px 60px}}
+.ticker{position:absolute;bottom:0;left:0;right:0;height:7cqh;background:rgba(0,0,0,.75);z-index:45;overflow:hidden;display:flex;align-items:center;border-top:1px solid rgba(255,255,255,.2);opacity:0;transition:opacity .5s}
+.ticker div{white-space:nowrap;font-size:3cqw;font-weight:700;color:#fde68a;animation:tick 16s linear infinite;padding:0 4cqw}
+@keyframes tick{from{transform:translateX(-100%)}to{transform:translateX(100vw)}}
+.hud{position:absolute;top:2.5cqw;left:3cqw;z-index:46;display:flex;gap:2cqw;align-items:center;font-size:2.4cqw;font-weight:900;opacity:0;transition:opacity .5s}
+.live{background:#dc2626;padding:.4cqw 1.6cqw;border-radius:1cqw;animation:blink 1.4s infinite}
+@keyframes blink{50%{opacity:.4}}
+.chname{position:absolute;top:2.5cqw;right:3cqw;z-index:50;font-weight:900;color:#4ade80;font-size:3cqw;text-shadow:0 0 2cqw #16a34a}
+
+.eq{display:flex;gap:1cqw;align-items:flex-end;height:14cqw;margin:1cqw 0 2cqw}
+.eq i{width:2cqw;background:linear-gradient(#f0abfc,#7c3aed);border-radius:1cqw;animation:eq .9s ease-in-out infinite alternate}
+@keyframes eq{from{height:15%}to{height:100%}}
+.meter{width:70%;height:3cqw;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden;margin:1cqw 0 2cqw}
+.meter b{display:block;height:100%;width:0;background:linear-gradient(90deg,#fbbf24,#f43f5e);animation:fill 2.5s ease-out forwards}
+@keyframes fill{to{width:100%}}
+.row{font-size:3cqw;font-weight:700;width:80%;display:flex;justify-content:space-between;margin-bottom:.6cqw}
+.sun{font-size:12cqw;animation:spin 12s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pop{animation:pop .8s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+#letter{position:absolute;inset:0;z-index:55;background:radial-gradient(circle,#4a0d2b,#12010a);display:none;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:4cqw}
+#letter.show{display:flex;animation:pop .8s both}
+#letter p{font-size:3.4cqw;line-height:1.9;font-weight:700;color:#fce7f3;min-height:20cqw}
+.cur::after{content:'|';animation:blink 1s infinite}
+
+@keyframes dash{to{stroke-dashoffset:-1}}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.25)}30%{transform:scale(1)}45%{transform:scale(1.18)}}
+.beat{font-size:13cqw;display:inline-block;animation:beat 1.1s infinite;filter:drop-shadow(0 0 3cqw #f43f5e)}
+.bt{border:none;border-radius:99px;font-family:inherit;font-weight:900;font-size:3.2cqw;padding:1.2cqw 5cqw;color:#fff;cursor:pointer;transition:transform .25s}
+.tv-container{transition:transform .2s}
+</style>
+</head>
+<body>
+<div class="wall-bg"></div>
+<canvas id="sky" style="position:fixed;inset:0;z-index:-1"></canvas>
+<div id="ambilight" class="ambilight-glow"></div>
+
+<div class="tv-container">
+  <div class="tv-frame">
+    <div class="screen">
+      <div class="glass-reflection"></div>
+      <div class="scanlines"></div>
+      <div id="letter" onclick="this.classList.remove('show')"><div class="sun" style="font-size:8cqw;animation:none">💌</div><h1 class="h name">رسالة إلى رنيم</h1><p id="letterTxt"></p><small style="font-size:2.2cqw;opacity:.5">المس للإغلاق</small></div><div class="noise" id="noise"></div><div id="parts" class="parts"></div><div id="hud" class="hud"><span class="live">LIVE</span><span id="clock"></span></div><div id="ticker" class="ticker"><div id="tickText"></div></div>
+      <div id="blackScreen" class="absolute inset-0 bg-black z-20"></div>
+      <div id="content" class="absolute inset-0 flex flex-col justify-center items-center text-center p-4 md:p-12 opacity-0 transition-opacity duration-500 z-10"></div>
+      <div id="osd" class="chname opacity-0 transition-opacity duration-300 font-mono">CH <span id="chNum">1</span> · <span id="chName"></span></div>
+    </div>
+    <div id="led" class="led-light led-off"></div>
+    <div class="absolute bottom-1 left-1/2 -translate-x-1/2 text-gray-600 text-[10px] font-bold tracking-[3px] z-50">SONY FRIENDS</div>
+  </div>
+</div>
+
+<div class="table-surface">
+  <div id="tableReflection" class="tv-reflection"></div>
+  <div class="remote-container">
+    <div class="remote-panel">
+      <div class="flex justify-between items-center w-full px-2">
+        <div class="flex flex-col items-center relative">
+          <div id="powerHint" class="power-hint">اضغطي هنا</div>
+          <button id="powerBtn" onclick="togglePower()" class="btn btn-power needs-attention" title="تشغيل"><i data-lucide="power" width="28" height="28"></i></button>
+          <span class="text-[10px] text-red-500 font-bold mt-1">تشغيل</span>
+        </div>
+        <div class="text-gray-500 text-[10px] font-bold tracking-widest opacity-50">QAIS REMOTE</div>
+        <div class="flex flex-col items-center">
+          <button onclick="sendLove()" class="btn btn-heart"><i data-lucide="heart" width="24" height="24" fill="currentColor"></i></button>
+          <span class="text-[10px] text-amber-400 font-bold mt-1">صديقتي</span>
+        </div>
+      </div>
+      <div class="w-full h-[1px] bg-gray-700 opacity-50 my-1"></div>
+      <div class="flex justify-center items-center gap-8">
+        <button onclick="changeChannel(-1)" class="btn btn-arrow"><i data-lucide="chevron-right" width="32" height="32"></i></button>
+        <div class="flex flex-col items-center w-12">
+          <span class="text-[9px] text-gray-500 font-bold">CH</span>
+          <span id="remoteCh" class="text-2xl font-mono font-bold text-blue-400">--</span>
+        </div>
+        <button onclick="changeChannel(1)" class="btn btn-arrow"><i data-lucide="chevron-left" width="32" height="32"></i></button>
+      </div>
+    </div>
+    <div class="text-center mt-3 text-gray-600 text-[10px] font-bold opacity-60">من إعداد وتصميم: قيس جازي</div>
+  </div>
+</div>
+
+<script>
+const channels = [
+ {name:"أخبار",em:["💛","✨"],bg:"linear-gradient(to bottom,#000428,#004e92)",color:"#004e92",html:`
+  <div class="tag bg-red-600 animate-pulse">خبر عاجل</div>
+  <h1 class="h">إجماع في الكلية 🎓</h1>
+  <p class="p box text-blue-100">عاجل: أجمعت الأوساط على أن <span class="name">رنيم</span> أطيب وأحلى طالبة تصميم جرافيك، والخبر مؤكد 100%.</p>`},
+ {name:"ألوان",em:["🎨","✨"],bg:"linear-gradient(to bottom,#1f2937,#4c1d95)",color:"#8b5cf6",html:`
+  <div class="tag border-2 border-violet-300 text-violet-200 tracking-widest">DESIGN TV</div>
+  <div style="display:flex;gap:2cqw;margin:1cqw 0 2cqw">
+   <i class="pop" style="width:8cqw;height:8cqw;border-radius:50%;background:#f472b6"></i><i class="pop" style="animation-delay:.15s;width:8cqw;height:8cqw;border-radius:50%;background:#fbbf24"></i><i class="pop" style="animation-delay:.3s;width:8cqw;height:8cqw;border-radius:50%;background:#34d399"></i><i class="pop" style="animation-delay:.45s;width:8cqw;height:8cqw;border-radius:50%;background:#60a5fa"></i><i class="pop" style="animation-delay:.6s;width:8cqw;height:8cqw;border-radius:50%;background:#a78bfa"></i></div>
+  <h1 class="h">لوحة ألوان <span class="name">رنيم</span> 🎨</h1>
+  <p class="p box text-violet-100" style="font-size:3cqw">كل لون فيها يشبه صاحبتها: مبهج، هادئ، وفيه ذوق رفيع ✨</p>`},
+ {name:"طبيعة",em:["🌿","🦋"],bg:"linear-gradient(to bottom,#134e5e,#71b280)",color:"#71b280",html:`
+  <div class="tag border-2 border-yellow-400 text-yellow-300 tracking-widest">NAT GEO</div>
+  <h1 class="h">ظواهر كونية 🌍</h1>
+  <p class="p box text-green-100">اكتشف العلماء أن طيبة قلب <span class="name">رنيم</span> من أندر مصادر الطاقة الإيجابية المتجددة.</p>`},
+ {name:"سينما",em:["⭐","🎬"],bg:"linear-gradient(to bottom,#2b0505,#000)",color:"#a00",html:`
+  <div class="font-serif italic text-yellow-600" style="font-size:3cqw">Cinema 1 · عرض أول</div>
+  <h1 class="h" style="font-size:9cqw;text-shadow:0 0 3cqw #f59e0b">أحلى صديقة</h1>
+  <p class="p text-gray-300">بطولة: <span class="name">رنيم</span> · إخراج: الصداقة الحقيقية</p>
+  <div class="text-yellow-400" style="font-size:5cqw;letter-spacing:1cqw">★★★★★</div>`},
+ {name:"طبخ",em:["☕","🍪"],bg:"linear-gradient(to bottom,#ff512f,#dd2476)",color:"#dd2476",html:`
+  <i data-lucide="chef-hat" class="ico text-white"></i>
+  <h1 class="h">مطبخ الصداقة 🍪</h1>
+  <p class="p box text-yellow-100">المقادير: ثقة + ضحكة + قهوة + شوية فوضى إبداعية<br>والنتيجة: صداقة مع <span class="name">رنيم</span></p>`},
+ {name:"موسيقى",em:["🎵","🎶"],bg:"linear-gradient(to bottom,#1e0b3a,#5b21b6)",color:"#7c3aed",html:`
+  <div class="eq"><i></i><i style="animation-delay:.2s"></i><i style="animation-delay:.5s"></i><i style="animation-delay:.1s"></i><i style="animation-delay:.4s"></i><i style="animation-delay:.3s"></i><i style="animation-delay:.6s"></i></div>
+  <div class="tag bg-fuchsia-600">🎧 الأغنية رقم 1</div>
+  <h1 class="h">أغنية الصداقة لـ <span class="name">رنيم</span></h1>
+  <p class="p text-purple-200">تُبثّ بدون إعلانات وبدون تقطيع 🎶</p>`},
+ {name:"إعلان",em:["☕","🎁"],bg:"linear-gradient(to bottom,#065f46,#10b981)",color:"#10b981",html:`
+  <div class="tag bg-white text-emerald-700 -rotate-3">إعلان 📢</div>
+  <h1 class="h">قهوة قيس ☕</h1>
+  <p class="p box text-white">عرض خاص لـ <span class="name">رنيم</span> فقط:<br>قهوة مجانية عند كل مشروع تصميم تسلّمينه 🎓</p>
+  <div class="tag bg-yellow-400 text-black mt-2 animate-bounce">العرض لا يقبل التفاوض!</div>`},
+ {name:"كوكبة",em:["⭐","🌙"],bg:"radial-gradient(circle at 50% 40%,#1e1b4b,#020617)",color:"#6366f1",html:`
+  <div class="tag border border-indigo-300 text-indigo-200 tracking-widest">مرصد النجوم 🔭</div>
+  <svg viewBox="0 0 100 100" style="width:28cqw;height:26cqw;overflow:visible"><path pathLength="1" d="M50 8 L61 38 L93 38 L67 57 L77 88 L50 69 L23 88 L33 57 L7 38 L39 38Z" fill="rgba(251,191,36,.12)" stroke="#fde68a" stroke-width="1.5" style="stroke-dasharray:1;animation:draw 3s ease-out forwards;filter:drop-shadow(0 0 3px #fbbf24)"/></svg>
+  <h1 class="h" style="margin-top:1cqw">اكتشاف فلكي جديد</h1>
+  <p class="p text-indigo-100" style="font-size:3cqw">سُمّيت هذه النجمة <span class="name">نجمة رنيم</span>، لأنها ألمع من حولها ✨</p>`},
+ {name:"أفكار",em:["💡","🎨"],bg:"linear-gradient(to bottom,#422006,#b45309)",color:"#f59e0b",html:`
+  <div class="beat">💡</div>
+  <h1 class="h" style="font-size:4.6cqw">عدّاد أفكار <span class="name">رنيم</span> الإبداعية</h1>
+  <p class="p box text-amber-100" style="font-size:3cqw">منذ فتحتِ الصفحة: <b id="beat" style="font-size:5cqw;color:#fde68a">٠</b> فكرة تصميم جديدة</p>`},
+ {name:"سؤال",em:["💛","🌸"],bg:"linear-gradient(to bottom,#4c1d95,#be185d)",color:"#c026d3",html:`
+  <div class="tag bg-yellow-300 text-black">سؤال أخير 🎤</div>
+  <h1 class="h">يا <span class="name">رنيم</span>… هل قيس صديقك المفضل؟</h1>
+  <div style="display:flex;gap:4cqw;align-items:center;margin-top:2cqw">
+   <button class="bt" style="background:linear-gradient(#f59e0b,#d97706)" onclick="yes()">طبعاً 💛</button>
+   <button class="bt" style="background:#374151" onmouseover="dodge(this)" ontouchstart="dodge(this);return false" onclick="dodge(this)">لا</button>
+  </div>
+  <p class="p text-pink-200" style="font-size:2.4cqw;margin-top:2cqw">(جرّبي تضغطي على "لا" 😉)</p>`}
+];
+const ticks="💛 رنيم: أطيب قلب وأحلى لمسة تصميم   ✦   الصداقة أجمل مشروع   ✦   ألوانك تشبه قلبك   ✦   شكراً لأنك موجودة   ✦   ";
+let isOn=false,currentIdx=0;
+const $=id=>document.getElementById(id);
+const noise=$('noise'),parts=$('parts'),ticker=$('ticker'),hud=$('hud'),clock=$('clock'),chName=$('chName'),led=$('led'),blackScreen=$('blackScreen'),content=$('content'),ambilight=$('ambilight'),tableReflection=$('tableReflection'),osd=$('osd'),chNum=$('chNum'),remoteCh=$('remoteCh'),powerBtn=$('powerBtn'),powerHint=$('powerHint');
+lucide.createIcons();
+function togglePower(){
+ isOn=!isOn;powerHint.style.display='none';powerBtn.classList.remove('needs-attention');
+ if(isOn){
+  led.classList.replace('led-off','led-on');blackScreen.classList.add('anim-on');
+  blip(520,.15);setTimeout(()=>{blackScreen.style.opacity=0;content.innerHTML='<div class="pop" style="font-size:4cqw;letter-spacing:1cqw;color:#fbcfe8;font-weight:900">SONY FRIENDS</div><h1 class="h name pop" style="margin-top:2cqw">أهلاً رنيم 💛</h1>';content.style.opacity=1;ambilight.style.backgroundColor='#d97706';ambilight.style.opacity=.5;setTimeout(()=>{if(isOn)renderChannel()},1700)},400);
+ }else{
+  led.classList.replace('led-on','led-off');blackScreen.classList.remove('anim-on');
+  blackScreen.style.opacity=1;content.style.opacity=0;ticker.style.opacity=0;hud.style.opacity=0;parts.innerHTML='';ambilight.style.opacity=0;tableReflection.style.opacity=0;remoteCh.innerText="--";
+ }
+}
+function changeChannel(d){
+ if(!isOn)return;blip(300+Math.random()*300,.08);
+ content.style.opacity=0;
+ currentIdx=(currentIdx+d+channels.length)%channels.length;
+ setTimeout(renderChannel,300);
+}
+let AC;function blip(f,d){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;o.type='sine';g.gain.value=.05;o.connect(g);g.connect(AC.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);o.stop(AC.currentTime+d)}catch(e){}}
+let loveCount=0;const LT="رنيم…\nصداقتك من أحلى الأشياء،\nولمساتك في التصميم تشبه قلبك: ملوّنة ودافئة.\nشكراً لأنك موجودة.\n— قيس";
+function showLetter(){fireworks();const L=$('letter'),t=$('letterTxt');L.classList.add('show');t.textContent='';t.classList.add('cur');let i=0;const iv=setInterval(()=>{t.textContent=LT.slice(0,++i);if(i>=LT.length){clearInterval(iv);t.classList.remove('cur')}},70);t.style.whiteSpace='pre-line'}
+let sx=0;const tf=document.querySelector('.tv-frame');tf.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});tf.addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>50)changeChannel(d>0?-1:1)});
+document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')changeChannel(1);if(e.key==='ArrowRight')changeChannel(-1);if(e.key===' ')togglePower()});
+
+const fx=$('fx'),cx=fx.getContext('2d');function rs(){fx.width=innerWidth;fx.height=innerHeight}rs();addEventListener('resize',rs);
+let P=[],run=false;
+function loop(){cx.clearRect(0,0,fx.width,fx.height);P=P.filter(p=>p.l>0);for(const p of P){p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.l--;cx.globalAlpha=Math.min(1,p.l/30);if(p.t){cx.font=p.s+'px serif';cx.fillText(p.t,p.x,p.y)}else{cx.fillStyle=p.c;cx.beginPath();cx.arc(p.x,p.y,p.s,0,7);cx.fill()}}cx.globalAlpha=1;if(P.length)requestAnimationFrame(loop);else run=false}
+function add(p){P.push(p);if(!run){run=true;requestAnimationFrame(loop)}}
+function boom(x,y){const c='hsl('+Math.random()*360+',90%,65%)';for(let i=0;i<60;i++){const a=Math.random()*6.28,v=Math.random()*5+1;add({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,g:.05,l:70+Math.random()*30,s:2,c})}}
+function fireworks(){for(let i=0;i<7;i++)setTimeout(()=>{boom(innerWidth*(.15+Math.random()*.7),innerHeight*(.1+Math.random()*.4));blip(200+Math.random()*400,.3)},i*350)}
+addEventListener('pointermove',e=>{if(Math.random()<.35)add({x:e.clientX,y:e.clientY,vx:Math.random()-.5,vy:-1-Math.random(),g:-.01,l:45,s:14,t:['💖','✨','💗'][Math.random()*3|0]})});
+const sk=$('sky'),sc=sk.getContext('2d');let S=[],sh=null;function sr(){sk.width=innerWidth;sk.height=innerHeight;S=Array.from({length:90},()=>({x:Math.random()*sk.width,y:Math.random()*sk.height,r:Math.random()*1.4+.3,p:Math.random()*6}))}sr();addEventListener('resize',sr);
+(function sky(t){sc.clearRect(0,0,sk.width,sk.height);sc.fillStyle='#fff';for(const o of S){sc.globalAlpha=.3+.7*Math.abs(Math.sin(t/900+o.p));sc.beginPath();sc.arc(o.x,o.y,o.r,0,7);sc.fill()}if(!sh&&Math.random()<.004)sh={x:Math.random()*sk.width,y:0,l:70};if(sh){sc.globalAlpha=1;sc.strokeStyle='#fde68a';sc.lineWidth=2;sc.beginPath();sc.moveTo(sh.x,sh.y);sc.lineTo(sh.x+34,sh.y-20);sc.stroke();sh.x-=9;sh.y+=5.5;if(--sh.l<0)sh=null}requestAnimationFrame(sky)})(0);
+const tc=document.querySelector('.tv-container');addEventListener('pointermove',e=>{tc.style.transform='perspective(1200px) rotateY('+((e.clientX/innerWidth-.5)*8)+'deg) rotateX('+(-(e.clientY/innerHeight-.5)*6)+'deg)'});
+const t0=Date.now();setInterval(()=>{const b=$('beat');if(b)b.textContent=Math.floor((Date.now()-t0)/830).toLocaleString('ar-EG')},400);
+function dodge(b){b.style.transform='translate('+((Math.random()-.5)*50)+'cqw,'+((Math.random()-.5)*30)+'cqh)';blip(150,.1)}
+function yes(){content.innerHTML='<div class="sun pop" style="animation:none">😍</div><h1 class="h name pop">كنت أعرف! 😄</h1><p class="p box text-white pop">صداقتنا أحلى شي… شكراً يا رنيم 💛</p>';fireworks();sendLove()}
+function tickClock(){const d=new Date();clock.innerText=d.toLocaleTimeString('ar-JO',{hour:'2-digit',minute:'2-digit'})}
+setInterval(tickClock,10000);tickClock();
+function particles(em){parts.innerHTML='';for(let i=0;i<14;i++){const e=document.createElement('span');e.textContent=em[i%em.length];e.style.left=Math.random()*95+'%';e.style.fontSize=(2+Math.random()*3)+'cqw';e.style.animationDuration=(5+Math.random()*5)+'s';e.style.animationDelay=(Math.random()*5)+'s';parts.appendChild(e)}}
+function renderChannel(){
+ noise.classList.remove('on');void noise.offsetWidth;noise.classList.add('on');
+ ticker.style.opacity=1;hud.style.opacity=1;$('tickText').textContent=ticks+ticks;
+ const ch=channels[currentIdx];
+ content.innerHTML=ch.html;content.style.opacity=1;
+ ambilight.style.backgroundColor=ch.color;ambilight.style.opacity=.5;
+ tableReflection.style.backgroundColor=ch.color;tableReflection.style.opacity=.2;
+ document.querySelector('.screen').style.background=ch.bg;
+ chNum.innerText=remoteCh.innerText=currentIdx+1;chName.innerText=ch.name;particles(ch.em);
+ osd.style.opacity=1;setTimeout(()=>osd.style.opacity=0,2000);
+ lucide.createIcons();
+}
+function sendLove(){
+ if(!isOn)return;blip(880,.2);if(++loveCount===5){loveCount=0;setTimeout(showLetter,600)}
+ for(let i=0;i<25;i++){
+  const h=document.createElement('div');
+  h.innerHTML=['💛','🎨','✨','🌸','⭐'][i%5];
+  Object.assign(h.style,{position:'absolute',left:'50%',top:'50%',fontSize:(Math.random()*40+20)+'px',transform:'translate(-50%,-50%) scale(0)',transition:'all 1s cubic-bezier(.1,.7,1,.1)',zIndex:100,pointerEvents:'none'});
+  document.querySelector('.tv-frame').appendChild(h);
+  setTimeout(()=>{
+   const a=Math.random()*Math.PI*2,v=Math.random()*400+100;
+   h.style.transform=`translate(calc(-50% + ${Math.cos(a)*v}px),calc(-50% + ${Math.sin(a)*v}px)) scale(1) rotate(${Math.random()*360}deg)`;
+   h.style.opacity=0;
+  },50);
+  setTimeout(()=>h.remove(),1000);
+ }
+}
+</script>
+<canvas id="fx" style="position:fixed;inset:0;z-index:200;pointer-events:none"></canvas>
+</body>
+</html>
